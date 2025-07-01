@@ -251,7 +251,29 @@ app.delete("/deleteTutorial/:id", async (req, res) => {
   const result = await tutorsCollection.deleteOne({ _id: new ObjectId(id) });
   res.send(result);
 });
+// Add this route after your existing routes
+app.get("/searchTutors", async (req, res) => {
+  try {
+    const { language } = req.query;
 
+    if (!language || language.trim() === "") {
+      // If no search term, return all tutors
+      const result = await tutorsCollection.find().toArray();
+      return res.send(result);
+    }
+
+    // Case-insensitive search using regex
+    const searchRegex = new RegExp(language, 'i');
+    const result = await tutorsCollection.find({
+      language: searchRegex
+    }).toArray();
+
+    res.send(result);
+  } catch (error) {
+    console.error("Search error:", error);
+    res.status(500).send({ error: "Search failed" });
+  }
+});
 app.get("/", async (req, res) => {
   res.send("Hello World!");
 });
