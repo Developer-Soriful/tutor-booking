@@ -255,6 +255,12 @@ app.delete("/deleteTutorial/:id", async (req, res) => {
 app.get("/", async (req, res) => {
   res.send("Hello World!");
 });
+
+// 404 handler (must be last)
+app.use((req, res, next) => {
+  res.status(404).json({ error: "Route not found" });
+});
+
 export default app;
 
 // done this project
